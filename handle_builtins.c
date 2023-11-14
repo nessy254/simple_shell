@@ -4,7 +4,7 @@
  *_exit - exits the shell
  *@arguments: the arguments passed to _exit
  *arguments[1] will determine the exit status
- *@allocated_line: a dynamically allocated space that should be freed before exit
+ *@allocated_line: a dynamically allocated space that should be freed
  *Return: 0 on success, although it will never reach this point
  */
 int _exit(char **arguments, char *allocated_line)
@@ -40,7 +40,9 @@ int _exit(char **arguments, char *allocated_line)
  *
  *Return: nothing, void
  */
-void displayErrorMessage(char **programName, char **inputArgs, int iterationCount)
+void displayErrorMessage(char **programName,
+		char **inputArgs,
+		int iterationCount)
 {
 	char *separator = ": ";
 	char *errorMessage = "command not found";

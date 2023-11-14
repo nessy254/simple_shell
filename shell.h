@@ -22,6 +22,7 @@ int custom_strcmp(const char *s1, const char *s2);
 int custom_atoi(char *s);
 void displayErrorMessage(char **programName, char **inputArgs, int iterationCount);
 void displayIterationNumber(int iterations);
+char **tokenizer(char *line, int len);
 
 
 
