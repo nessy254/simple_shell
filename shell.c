@@ -11,13 +11,14 @@
 
 int main(int ac, char **av)
 {
-	(void) ac;
-	int iterations, i;
 	char *line;
 	char **arguments;
+	int iterations, i;
 	size_t size;
 
-	signal(SIGINT, _sigign);
+	(void)ac;
+
+	signal(SIGINT, custom_sig_handler);
 	for (iterations = 1; 1; iterations++)
 	{
 		line = NULL;
@@ -32,18 +33,18 @@ int main(int ac, char **av)
 			exit(EXIT_FAILURE);
 		}
 
-		i = countargs(line);
-		arguments = parser(line, i);
+		i = countArguments(line);
+		arguments = tokenizer(line, i);
 		if (custom_strcmp(arguments[0], "exit") == 0 &&
 			(custom_strlen(arguments[0]) == custom_strlen("exit")))
 		{
-			if (_exit(arguments, line) == -1)
-				err_mess(av, arguments, iterations);
+			if (custom_exit(arguments, line) == -1)
+				displayErrorMessage(av, arguments, iterations);
 		}
 		else if (arguments != NULL && arguments[0] != NULL)
 		{
 			if (interpreter(arguments) == -1)
-				err_mess(av, arguments, iterations);
+				displayErrorMessage(av, arguments, iterations);
 		}
 
 		free(line);

@@ -1,13 +1,13 @@
 #include "shell.h"
 
 /**
- *_exit - exits the shell
+ *custom_exit - exits the shell
  *@arguments: the arguments passed to _exit
  *arguments[1] will determine the exit status
  *@allocated_line: a dynamically allocated space that should be freed
  *Return: 0 on success, although it will never reach this point
  */
-int _exit(char **arguments, char *allocated_line)
+int custom_exit(char **arguments, char *allocated_line)
 {
 	int exit_status;
 
@@ -49,12 +49,32 @@ void displayErrorMessage(char **programName,
 
 	write(STDERR_FILENO, programName[0], custom_strlen(programName[0]));
 	write(STDERR_FILENO, separator, custom_strlen(separator));
-	err_num(iterationCount);
+	displayIterationNumber(iterationCount);
 	write(STDERR_FILENO, separator, custom_strlen(separator));
 	write(STDERR_FILENO, inputArgs[0], custom_strlen(inputArgs[0]));
 	write(STDERR_FILENO, separator, custom_strlen(separator));
 	write(STDERR_FILENO, errorMessage, custom_strlen(errorMessage));
 	write(STDERR_FILENO, "\n", 1);
+}
+
+/**
+ *format_eq_sign - Replace characters with colons until an equal sign is found,
+ *                  then replace the equal sign with a colon.
+ *@string: Pointer to a string.
+ */
+void format_eq_sign(char **string)
+{
+	int i = 0;
+
+	for (; string[0][i] != '='; i++)
+	{
+		string[0][i] = ':';
+	}
+
+	if (string[0][i] == '=')
+	{
+		string[0][i] = ':';
+	}
 }
 
 /**
@@ -83,4 +103,38 @@ void displayIterationNumber(int iterations)
 		write(STDERR_FILENO, &digit, 1);
 		divisor /= 10;
 	}
+}
+
+/**
+ *find_builtins - Finds and executes the built-in command, if available.
+ *@arguments: Double pointer to the command and its arguments.
+ *
+ *Return: 0 on success, -1 if the command is not a built-in.
+ */
+int find_builtins(char **arguments)
+{
+	builtin builtins[] = {
+		{ "env", print_env
+		},
+		{
+			NULL, NULL
+		}
+	};
+
+	int count, scan;
+
+	count = 0;
+	while (builtins[count].command_name != NULL)
+	{
+		if (custom_strcmp(builtins[count].command_name, arguments[0]) == 0 &&
+			custom_strlen(builtins[count].command_name) == custom_strlen(arguments[0]))
+		{
+			scan = builtins[count].function_ptr();
+			return (scan);
+		}
+
+		count++;
+	}
+
+	return (-1);
 }
