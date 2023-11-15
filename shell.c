@@ -50,6 +50,5 @@ int main(int ac, char **av)
 		free(line);
 		free(arguments);
 	}
-
 	return (0);
 }

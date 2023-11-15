@@ -51,43 +51,43 @@ int find_command_in_dirs(char **directories, char **command_to_find)
 {
 	char *current_directory;
 	int index;
-	struct stat sb;
+	struct stat search_binary;
 
 	current_directory = getcwd(NULL, 0);
-	index = 0;
+	if (!current_directory)
+		return (-1);
 
-	while (directories[index] != NULL)
+	for (index = 0; directories[index] != NULL; index++)
 	{
-		if (command_to_find[0][0] == '/')
+		if (command_to_find[0][0] == '/' || custom_strcmp(command_to_find[0], "./") == 0)
 			break;
-		if (custom_strcmp(command_to_find[0], "./") == 0)
-			break;
+
 		chdir(directories[index]);
-		if (stat(command_to_find[0], &sb) == 0)
+
+		if (stat(command_to_find[0], &search_binary) == 0)
 		{
-			command_to_find[0] = custom_strcat(directories[index],
-					command_to_find[0]);
-			if (command_to_find[0] == NULL)
+			char *new_path = custom_strcat(directories[index], command_to_find[0]);
+
+			if (!new_path)
 			{
 				free(current_directory);
-				free(directories);
 				return (-1);
 			}
+
+			command_to_find[0] = new_path;
 			break;
 		}
-		index++;
-	}
-	chdir(current_directory);
-	free(current_directory);
-	if (directories[index] == NULL)
-	{
-		free(directories);
-		return (-1);
 	}
 
-	free(directories);
+	chdir(current_directory);
+	free(current_directory);
+
+	if (directories[index] == NULL)
+		return (-1);
+
 	return (0);
 }
+
 
 /**
  *countArguments - Count the number of arguments in a string,

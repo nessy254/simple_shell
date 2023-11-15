@@ -33,7 +33,7 @@ char **tokenizer(char *line, int len)
 		token_count++;
 	}
 
-	tokens[token_count] = NULL;
+	tokens[token_count] = token;
 
 	return (tokens);
 }
@@ -52,12 +52,6 @@ int execute_command(char **args)
 
 	child_pid = fork();
 
-	if (child_pid == -1)
-	{
-		perror("error");
-		return (EXIT_FAILURE);
-	}
-
 	if (child_pid == 0)
 	{
 		if (execve(args[0], args, NULL) == -1)
@@ -68,10 +62,10 @@ int execute_command(char **args)
 	}
 	else
 	{
-		waitpid(child_pid, &status, 0);
+		wait(&status);
 	}
 
-	return (EXIT_SUCCESS);
+	return (0);
 }
 
 /**
@@ -83,34 +77,27 @@ int execute_command(char **args)
  */
 int interpreter(char **arguments)
 {
-	struct stat search_bin;
+	struct stat search_binary;
 
 	if (find_builtins(arguments) == 0)
-	{
-		return (EXIT_SUCCESS);
-	}
+		return (0);
 
-	if (find(arguments) == -1)
-	{
-		return (EXIT_FAILURE);
-	}
+	find(arguments);
 
-	if (stat(arguments[0], &search_bin) == -1)
-	{
-		return (EXIT_FAILURE);
-	}
+	if (stat(arguments[0], &search_binary) == -1)
+		return (-1);
 
-	if (stat(arguments[0], &search_bin) == 0 && S_ISREG(search_bin.st_mode) == 0)
-	{
-		return (EXIT_FAILURE);
-	}
+
+	if (stat(arguments[0], &search_binary) == 0 && S_ISREG(search_binary.st_mode) == 0)
+		return (-1);
+
 
 	if (execute_command(arguments) == -1)
 	{
-		return (EXIT_FAILURE);
+		return (-1);
 	}
 
-	return (EXIT_SUCCESS);
+	return (0);
 }
 
 /**

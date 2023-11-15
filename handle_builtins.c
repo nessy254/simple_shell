@@ -66,15 +66,12 @@ void format_eq_sign(char **string)
 {
 	int i = 0;
 
-	for (; string[0][i] != '='; i++)
+	while (string[0][i] != '=')
 	{
 		string[0][i] = ':';
+		i++;
 	}
-
-	if (string[0][i] == '=')
-	{
-		string[0][i] = ':';
-	}
+	string[0][i] = ':';
 }
 
 /**
@@ -114,11 +111,8 @@ void displayIterationNumber(int iterations)
 int find_builtins(char **arguments)
 {
 	builtin builtins[] = {
-		{ "env", print_env
-		},
-		{
-			NULL, NULL
-		}
+		{"env", print_env},
+		{NULL, NULL}
 	};
 
 	int count, scan;
