@@ -28,6 +28,7 @@ const char *custom_strchr(const char *s, char c);
 int custom_atoi(char *s);
 int custom_strncmp(const char *s1, const char *s2, size_t n);
 char *custom_strtok(char *line, char *delim);
+void process_command(char *cmd, ssize_t *status);
 
 /**Shell Prototypes **/
 void env_print(void);

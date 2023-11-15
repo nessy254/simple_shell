@@ -21,18 +21,32 @@ void separate_args(char *input_str, char *output_arr[])
 }
 
 /**
+ *process_command - brief Processes a command string.
+ *@cmd: Command string to process.
+ *@status: Pointer to status variable.
+ */
+void process_command(char *cmd, ssize_t *status)
+{
+	char *args[MAX_ARGS];
+
+	separate_args(cmd, args);
+
+	if (handle_cd(args, status) == -1)
+		write(STDERR_FILENO, "cd: An error occurred\n", 23);
+}
+
+/**
  *main - Function serving as the entry point for a Unix command line shell.
  *@ac: Number of command-line arguments provided.
  *@av: An array containing strings representing the command-line arguments.
  *Return: 0 upon successful execution, 1 in case of an error.
  */
 
-int main(int ac, char *av[])
+int main(int ac, __attribute__((unused)) char *av[])
 {
 	size_t length = 0;
 	ssize_t status = 0;
 	char *str = NULL;
-	(void) av;
 
 	if (isatty(STDIN_FILENO) && ac == 1)
 	{
@@ -55,11 +69,7 @@ int main(int ac, char *av[])
 			}
 			else if (custom_strncmp(str, "cd", 2) == 0)
 			{
-				char *args[MAX_ARGS];
-
-				separate_args(str, args);
-				if (handle_cd(args, &status) == -1)
-					write(STDERR_FILENO, "cd: An error occurred\n", 23);
+				process_command(str, &status);
 			}
 			_builtin(str);
 		}
