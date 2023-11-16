@@ -121,6 +121,7 @@ void _builtin(char *str)
 		custom_strcat(error_msg, args[0]);
 		custom_strcat(error_msg, "\n");
 		write(STDERR_FILENO, error_msg, custom_strlen(error_msg));
+		free_main_env(environ_main);
 		return;
 	}
 	_execve(location, args);
